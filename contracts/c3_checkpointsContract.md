@@ -40,4 +40,5 @@ sigmaProp(windowClosed)
 } else{
 sigmaProp(badProofSpend && (badCheckpoints || badNextStart))
 }
-}```
+}
+```
