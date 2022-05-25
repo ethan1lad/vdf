@@ -1,6 +1,7 @@
 ```scala
 {
 val slashValue = 1000000
+val miningFee = 1000000
 val proofSize = 4
 val checkpointAddress = fromBase58("")
 val proofToken = SELF.tokens(0)._1
@@ -15,7 +16,8 @@ blake2b256(output.propositionBytes) == checkpointAddress))
 val refundConditions = allOf(Coll(
 OUTPUTS.size == 2,
 OUTPUTS(0).tokens.size == 0,
-OUTPUTS(0).propositionBytes == SELF.R7[Coll[Byte]].get))
+OUTPUTS(0).propositionBytes == SELF.R7[Coll[Byte]].get,
+OUTPUTS(0).value == SELF.value - miningFee))
 sigmaProp(refundConditions || checkpointConditions)
 }
 ```
