@@ -26,7 +26,7 @@ The major parts of our VDF construction are:
 4.	Compose f(x) n times, `f^n(x) = (f ∘ f ∘ f...)(x)   (n iterations)` which gives an output _r_ (128 Bits)
 5.	Verify output by computing `r ^ 2^n mod p = x mod p`
 We detail each of these parts below.
-#### 1. Select a 128-bit gaussian prime _p_
+### 1. Select a 128-bit gaussian prime _p_
 To begin we describe our concerns with how we are selecting _p_:
 
 - All selected values of our VDF implementation are 128 bits in length. Ideally, we would chose a larger _p_ since modular square roots are O(log _p_), however, we could not find a natural way to implement the verification `r ^ 2^n mod p = x mod p` under the 256-bit size limitation of BigInts in ergoscript for _p_, _x_ and _r_ of size larger than 128 bits.
@@ -41,7 +41,7 @@ Our presentation is missing a few small parts of a fully secure VDF. One such pa
 
 The files provided here have the VDF prover select their own _p_ (provide link), there are no checks in the verification process that ensure _p_ is a prime, is congruent to 3 mod 4 or is of 128-bits in length. We did not implement these checks because we are not certain on whether it is necessary to change _p_ (to avoid the mapping of inputs seeds to results) or if 128-bit sized _p_ is large enough to not have it change for each VDF calculation. We require someone with the relevant background to let us know if this changing of _p_ is neccessary. If it is neccessary, our selection process we envision would involve the creation of epochs under the VDF protocol, where each epoch would change _p_ based on the latest Ergo block header to prevent pre-calculation of future _p_.
 
-#### 2.	Select a 128-bit seed _x_
+### 2.	Select a 128-bit seed _x_
 The selection of the seed _x_ is not described by our VDF as this will be up to the smart contract looking to use the VDF. Any selection is fine, so long as the source can take advantage of our VDF's delay property. So selections like a 128-bit part of an Ergo block header or a selection of the 128-bit part of an oracle box id would suffice.
 
 
