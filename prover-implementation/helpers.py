@@ -36,6 +36,7 @@ def squareRoot(n, p):
         return x
     # If none of the above two work, then
     # square root doesn't exist
+    print("ye")
     return -1
 
 
@@ -129,3 +130,17 @@ def encodeCollBigInt(coll):
     for bInt in coll:
         res += bInt
     return res
+
+# Encode int less than 128
+def encodeInt(n):
+    if (n & 0x80000000):
+        n = -0x100000000 + n
+    k = (n << 1) ^ (n >> 32)
+    if (k & 0x80000000):
+        k = -0x100000000 + k
+    hexResp = format(k, 'x')
+    if len(hexResp) != 2:
+        hexResp = "0" + hexResp
+    if k > 127:
+        hexResp += "01"
+    return "04" + hexResp
