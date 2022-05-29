@@ -22,27 +22,35 @@ There are numerous functions that make fine candidate VDFs, however we have sele
 The major parts of our VDF construction are:
 1.	Select a 128-bit gaussian prime _p_ `p ≡ 3 mod 4`
 2.	Select a 128-bit seed _x_
-3.	Compute `f(x) ≡ √x mod p`
-4.	Compose f(x) n times, `f^n(x) = (f ∘ f ∘ f...)(x)   (n iterations)` which gives an output _r_ (128 Bits)
+3.	Compute `f(x) ≡ √x mod p` and	compose f(x) n times, `f^n(x) = (f ∘ f ∘ f...)(x)   (n iterations)` which gives an output _r_ (128 Bits)
 5.	Verify output by computing `r ^ 2^n mod p = x mod p`
+
 We detail each of these parts below.
 ### 1. Select a 128-bit gaussian prime _p_
-To begin we describe our concerns with how we are selecting _p_:
+Before we describe our selection of _p_, we would like to acknowledge some potential concerns with the bit-size of our selected prime:
 
 - All selected values of our VDF implementation are 128 bits in length. Ideally, we would chose a larger _p_ since modular square roots are O(log _p_), however, we could not find a natural way to implement the verification `r ^ 2^n mod p = x mod p` under the 256-bit size limitation of BigInts in ergoscript for _p_, _x_ and _r_ of size larger than 128 bits.
 
-- If we could select a larger _p_, there would be gains to the efficiency of our VDF, so if the Judges could see some way of increasing _p_ whilst still having it possible to verify the VDF in Ergoscript that would be great :)
+- If we could select a larger _p_ there would be gains to the efficiency of our VDF, so if the Judges could see some way of increasing _p_ whilst still having it possible to verify the VDF in Ergoscript that would be great :)
 
-- Another, possibly more important, outcome of a larger _p_ is that for larger _p_ (and consequently larger seed value and result value) it becomes more and more unfeasible for an adversary to have a map from all input seeds under some _p_ to their result. Whilst we believe 128-bit sizes should be ok, we are concerned that this is not secure enough, particularily if we do not find some way to randomly rotate the _p_ in use by the protocol.
+- Another, possibly more important outcome of a larger _p_, is that for larger _p_ (and consequently larger seed value and result value) it becomes more and more unfeasible for an adversary to have a map from all input seeds under some _p_ to their result. Whilst we believe 128-bit sizes should be ok, we are concerned that this is not secure enough, particularily if _p_ is a static value in use by the protocol.
 
-Our selection for _p_:
+The above acknowledgements are important and any feedback would be appreciated, however, if we assume that a 128-bit sized _p_ and 128-bit sized seed can offer enough entropy for an input to output map being unfeasible then our VDF construction is valid. We offer two possible selections of _p_:
 
-Our presentation is missing a few small parts of a fully secure VDF. One such part is a proper selection of _p_.
+1. Use a static value that is known to be a 128-bit gaussian prime for all calculations under the VDF.
+2. Define an epoch length for the VDF protocol and change the value of _p_ when the epoch ends. To prevent knowledge of future _p_, the value _p_ should be generated from some value of the previous epoch (like a box id from the protocol).
 
-The files provided here have the VDF prover select their own _p_ (provide link), there are no checks in the verification process that ensure _p_ is a prime, is congruent to 3 mod 4 or is of 128-bits in length. We did not implement these checks because we are not certain on whether it is necessary to change _p_ (to avoid the mapping of inputs seeds to results) or if 128-bit sized _p_ is large enough to not have it change for each VDF calculation. We require someone with the relevant background to let us know if this changing of _p_ is neccessary. If it is neccessary, our selection process we envision would involve the creation of epochs under the VDF protocol, where each epoch would change _p_ based on the latest Ergo block header to prevent pre-calculation of future _p_.
+The implementation provided in this repository does not include the selection of _p_, instead we have allowed the prover to select their own _p_ (and seed) which is not secure, however once we have some feedback on the proper selection of our prime we can easily implement this for our VDF (for example publish _p_ on-chain, the prover reads and includes this in their proof, their proof's usage of _p_ can be easily evaluated using a dataInput in ErgoScript)
+
 
 ### 2.	Select a 128-bit seed _x_
-The selection of the seed _x_ is not described by our VDF as this will be up to the smart contract looking to use the VDF. Any selection is fine, so long as the source can take advantage of our VDF's delay property. So selections like a 128-bit part of an Ergo block header or a selection of the 128-bit part of an oracle box id would suffice.
+The selection of the seed _x_ is no concern of the VDF protocol. Any dApp can provide a seed they want the VDF to publish (by funding a VDF mint box with their seed) and the VDF will calculate the result given that seed as the input. 
+
+We recommend that dApps use Ergo block headers as the source of their seed or trusted oracle box id's (like the ERG/USD oracle). Any source is fine as long as the source is able to go 'stale' after a period of time (to take advantage of the delay property of our VDF) and that period of time is longer than the VDF's expected minimum computation time. 
+
+
+
+
 
 
 
