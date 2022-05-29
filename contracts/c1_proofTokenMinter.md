@@ -1,7 +1,7 @@
 # Proof Token Minter Contract
 This is the contract which dApps will fund with some Erg Value and a seed for the VDF prover to calculate the output for.
 
-Proof size refers to the the number of iterations the modular square root function should be composed (the number of iterations = proofSize * 35,600 in our implementation), in future this value should be made dynamic (set by the contract funder) however for simiplication we present it with the static value 360.
+Proof size refers to the the number of iterations the modular square root function should be composed (the number of iterations = proofSize * 35,600 in our implementation), in future this value should be made dynamic (set by the contract funder) however for simiplicity we present it with the static value 360.
 
 To spend the box, a VDF prover must input their own ERG, the amount they provide will be:
 
