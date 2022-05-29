@@ -57,7 +57,16 @@ Empirically this took us y minutes to run, however with better hardware this tim
 ### 4.	Verify output
 Perhaps this is the most exciting part of our presentation (going through the ergoscript!). 
 
-For our VDF to be meaningfully useful, we need to be able to verify the output in Ergoscript. We have provided this verification for a n iteration VDF using 3 ergoscript contracts [Link]
+For our VDF to be meaningfully useful, we need to be able to verify the output in Ergoscript. We have provided this verification for a n iteration VDF using 3 ergoscript contracts(link):
+a. c1
+b. c2
+c. c3
+
+#### a. c1
+A dapp funds c1 with 100 * slashValue Erg and the seed they wish to have a VDF compute. 
+
+
+
 
 
 
