@@ -1,8 +1,13 @@
+# Proof Distribution Contract
+This contract distrubutes the proof tokens for the VDF.
+
+It is only spendable by the VDF prover (the entity that provided the ERG to be slashed) and cannot be refunded (to penalise the spending of a funded VDF mint box where the VDF prover does not return a result)
+
+
 ```scala
 {
 val slashValue = 100000000L
 val miningFee = 1000000
-
 val proofSize = 360
 val checkpointAddress = fromBase58("")
 val proofToken = SELF.tokens(0)._1
