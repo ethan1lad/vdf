@@ -7,7 +7,7 @@ To spend the box, a VDF prover must input their own ERG, the amount they provide
 
 ```proofSize * slashValue + 2 * miningFee - dAppReward``` 
 
-If the VDF prover provides a correct result for the VDF calculation they will keep the entire value of their inputted ERG and the dAppReward.
+If the VDF prover provides a correct result for the VDF calculation they will keep the entire value of their inputted ERG (less mining fees) and the dAppReward.
 
 The contract has a register R4 which the dapp can use to record a refund address if they no longer wish for the VDF calculation to be made. The refund condition can be met immediately, but it would be nice to implement a deadline so that a VDF prover knows when it is possible for the VDF reward to be refunded.
 
