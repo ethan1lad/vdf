@@ -1,8 +1,9 @@
 ```scala
 {
-val slashValue = 1000000
+val slashValue = 100000000L
 val miningFee = 1000000
-val proofSize = 4
+
+val proofSize = 360
 val checkpointAddress = fromBase58("")
 val proofToken = SELF.tokens(0)._1
 val checkpoints = OUTPUTS.slice(0,OUTPUTS.size - 1)
@@ -11,13 +12,15 @@ val checkpointConditions = checkpoints.forall{
 output.tokens(0)._2 == 1,
 output.tokens(0)._1 == proofToken,
 output.value >= slashValue,
-blake2b256(output.propositionBytes) == checkpointAddress))
+blake2b256(output.propositionBytes) == checkpointAddress,
+output.R4[Coll[BigInt]].isDefined, // enter checkpoints
+output.R5[BigInt].isDefined, // prime p
+output.R6[Coll[Byte]].isDefined, // fold sized collection of bytes
+output.R7[Int].isDefined, // box index
+output.R8[BigInt].get == SELF.R8[BigInt].get, // Seed 
+output.R9[BigInt].isDefined)) // Prover result r
 } && OUTPUTS.size == proofSize + 1
-val refundConditions = allOf(Coll(
-OUTPUTS.size == 2,
-OUTPUTS(0).tokens.size == 0,
-OUTPUTS(0).propositionBytes == SELF.R7[Coll[Byte]].get,
-OUTPUTS(0).value == SELF.value - miningFee))
-sigmaProp(refundConditions || checkpointConditions)
+val pubKey = SELF.R7[GroupElement].get // Only allow prover to spend
+sigmaProp(checkpointConditions && proveDlog(pubKey))
 }
 ```
