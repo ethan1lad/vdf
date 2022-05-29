@@ -15,7 +15,7 @@ Like proof of work algorithms, a VDF can be efficiently verified.
 ##  Use case on Ergo:
 VDFs can be used to construct unmalleable randomness beacons on Ergo. Of course, a randomness beacon that nobody can influence is useful for Night Owl’s vision of a truly fair casino, but the applications of such a beacon spread far. Any dApp that requires incorruptible random numbers would likely require some VDF. We envision use cases such as: deciding tiebreaks, randomness in high-value games, randomness mechanisms in DAOs, vending machine style NFT drops…
 ## Our Randomness Beacon:
-We present a VDF that takes at least 10 minutes to compute which uses an Ergo Block hash as the input to the VDF and produces a 128-bit output. We argue that a 10-minute VDF offers reasonable certainty that randomness beacon is unmalleable, as it would take 5x the block time for a miner to know what output their proof of work solution would produce under the VDF, by which time it is likely their proof of work solution is stale (this becomes more likely as the network hash rate increases), however, it is possible to adjust the parameters of our VDF such that the delay time is longer for increased security.
+We present a VDF that takes at least 12 minutes to compute which uses an Ergo Block hash as the input to the VDF and produces a 128-bit output. We argue that a 12-minute VDF offers reasonable certainty that randomness beacon is unmalleable, as it would take 6x the block time for a miner to know what output their proof of work solution would produce under the VDF, by which time it is likely their proof of work solution is stale (this becomes more likely as the network hash rate increases), however, it is possible to adjust the parameters of our VDF such that the delay time is longer for increased security.
 
 There are numerous functions that make fine candidate VDFs, however we have selected the composition of modular square roots as our function, drawing inspiration from an [Ethereum implementation](https://jbonneau.com/doc/BGB17-IEEESB-proof_of_delay_ethereum.pdf)
 ## Our Construction:
@@ -50,20 +50,28 @@ We recommend that dApps use Ergo block headers as the source of their seed or tr
 
 
 ### 3.	Compute VDF
-Our implementation shows the computation of a VDF with n composition of `f(x) ≡ √x mod p`.
+Our implementation shows the computation of a VDF with approximately 12.8 million compositions of `f(x) ≡ √x mod p`.
 
-Empirically this took us y minutes to run, however with better hardware this time may be quicker. Further research of running times with more efficient VDF implementations and better hardware will be necessary to provide a guarantee of minimum running time. We doubt that anything larger than a 100x improvement is possible but this is just speculation for now. Any improvement to running time can be compensated by just increasing _n_ which requires more data to be stored on the blockchain (see verification) but this cost is minimal.
+Empirically this took us 12 minutes to run, however with better hardware this time may be quicker. Further research of running times with more efficient VDF implementations and better hardware will be necessary to provide a guarantee of minimum running time. We doubt that anything larger than a 100x improvement is possible but this is just speculation for now. Any improvement to running time can be compensated by just increasing _n_ which requires more data to be stored on the blockchain (see verification) but this cost is minimal.
 
 ### 4.	Verify output
 Perhaps this is the most exciting part of our presentation (going through the ergoscript!). 
 
-For our VDF to be meaningfully useful, we need to be able to verify the output in Ergoscript. We have provided this verification for a n iteration VDF using 3 ergoscript contracts(link):
+For our VDF to be meaningfully useful, we need to be able to verify the output in Ergoscript. We have provided this verification for our VDF using 3 ergoscript contracts(link):
 a. c1
 b. c2
 c. c3
 
 #### a. c1
-A dapp funds c1 with 100 * slashValue Erg and the seed they wish to have a VDF compute. 
+A dapp funds c1 with any amount of Erg and the seed they wish to have a VDF compute. An entity running the VDF prover can scan the c1 address looking for a box with a desired level of funding. Once the prover settles on a box they can then work on calculating the output to the VDF function. 
+
+When the prover finds the output _r_, they are ready to publish their result (spend c1), they do this by:
+- Providing some ERG that can be slashed for if they produced a bad result (we have set this to 0.1 ERG per checkpoint box which gives 36 ERG in total)
+- Minting 360 "proof tokens" which will be distrubuted to the checkpoint boxes. 
+- Providing their result for the seed and prime they used (should match the seed that the dapp requested)
+
+
+
 
 
 
