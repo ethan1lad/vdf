@@ -24,7 +24,7 @@ OUTPUTS(0).tokens(0)._1 == proofToken,
 OUTPUTS(0).tokens(0)._2 == proofSize,
 blake2b256(OUTPUTS(0).propositionBytes) == fromBase58("GNz4iSGQFqKap4W1d5cpZ3gQYhF2PNmAXURwYAC2THin"), // Send to distrubution address
 OUTPUTS(0).value == proofSize * slashValue + miningFee,
-OUTPUTS(0).R7[Coll[Byte]].isDefined,
+OUTPUTS(0).R7[GroupElement].isDefined,
 OUTPUTS(0).R8[BigInt].get == SELF.R5[BigInt].get)) // Set R8 to the seed value (R7 should be populated by VDF prover ERG address)
 val refund = allOf(Coll(
 OUTPUTS.size == 2,
