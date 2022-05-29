@@ -23,7 +23,7 @@ The major parts of our VDF construction are:
 1.	Select a 128-bit gaussian prime _p_ `p ≡ 3 mod 4`
 2.	Select a 128-bit seed _x_
 3.	Compute `f(x) ≡ √x mod p` and	compose f(x) n times, `f^n(x) = (f ∘ f ∘ f...)(x)   (n iterations)` which gives an output _r_ (128 Bits)
-5.	Verify output by computing `r ^ 2^n mod p = x mod p`
+4.	Verify output by computing `r ^ 2^n mod p = x mod p`
 
 We detail each of these parts below.
 ### 1. Select a 128-bit gaussian prime _p_
@@ -44,9 +44,20 @@ The implementation provided in this repository does not include the selection of
 
 
 ### 2.	Select a 128-bit seed _x_
-The selection of the seed _x_ is no concern of the VDF protocol. Any dApp can provide a seed they want the VDF to publish (by funding a VDF mint box with their seed) and the VDF will calculate the result given that seed as the input. 
+The selection of the seed _x_ is no concern of the VDF protocol. Any dApp can provide a seed they want the VDF to publish (by funding a VDF mint box with their seed) and the VDF will calculate the result given that seed (or negation of that seed) as the input. 
 
 We recommend that dApps use Ergo block headers as the source of their seed or trusted oracle box id's (like the ERG/USD oracle). Any source is fine as long as the source is able to go 'stale' after a period of time (to take advantage of the delay property of our VDF) and that period of time is longer than the VDF's expected minimum computation time. 
+
+
+### 3.	Compute VDF
+Our implementation shows the computation of a VDF with n composition of `f(x) ≡ √x mod p`.
+
+Empirically this took us y minutes to run, however with better hardware this time may be quicker. Further research of running times with more efficient VDF implementations and better hardware will be necessary to provide a guarantee of minimum running time. We doubt that anything larger than a 100x improvement is possible but this is just speculation for now. Any improvement to running time can be compensated by just increasing _n_ which requires more data to be stored on the blockchain (see verification) but this cost is minimal.
+
+### 4.	Verify output
+Perhaps this is the most exciting part of our presentation (going through the ergoscript!). 
+
+For our VDF to be meaningfully useful, we need to be able to verify the output in Ergoscript. We have provided this verification for a n iteration VDF using 3 ergoscript contracts [Link]
 
 
 
